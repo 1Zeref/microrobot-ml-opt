@@ -130,7 +130,6 @@ if app_mode == "🧙‍♂️ Thuật Sĩ Từng Bước (Universal Wizard - 5 B
         "Chuyển bước nhanh:",
         wizard_steps_labels,
         index=st.session_state.w_step - 1,
-        key="wizard_step_radio",
     )
     new_step_idx = wizard_steps_labels.index(selected_step_label) + 1
     if new_step_idx != st.session_state.w_step:

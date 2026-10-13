@@ -56,21 +56,28 @@ def init_wizard_session():
 
 
 def render_step_progress_bar():
-    """Render top wizard progress navigation bar."""
+    """Render top wizard progress navigation bar with interactive clickable step buttons."""
     steps = [
-        "1. Tải Lên & Gán Vai Trò",
-        "2. Tự Động Khám Phá & Độ Nhạy",
-        "3. Huấn Luyện Học Máy 1-Click",
-        "4. Bản Sao Số Trực Tiếp",
-        "5. Tối Ưu Hóa & Xuất Báo Cáo",
+        "1. 📥 Tải Lên & Gán Cột",
+        "2. 📊 Khám Phá & Độ Nhạy",
+        "3. 🧠 Huấn Luyện 1-Click",
+        "4. 🎛️ Bản Sao Số",
+        "5. 🏆 Tối Ưu & Báo Cáo",
     ]
     current = st.session_state.w_step
 
-    col_nav1, col_nav2 = st.columns([3, 1])
-    with col_nav1:
-        st.progress(current / 5.0)
-    with col_nav2:
-        st.markdown(f"**Bước {current} / 5**: {steps[current - 1]}")
+    col_btn = st.columns(5)
+    for idx, label in enumerate(steps):
+        s_num = idx + 1
+        with col_btn[idx]:
+            is_active = (s_num == current)
+            prefix = "▶ " if is_active else ("✓ " if s_num < current else "")
+            btn_style = "primary" if is_active else "secondary"
+            if st.button(f"{prefix}{label}", type=btn_style, width="stretch", key=f"nav_top_step_{s_num}"):
+                st.session_state.w_step = s_num
+                st.rerun()
+
+    st.progress(current / 5.0)
 
 
 # ==============================================================================
@@ -88,7 +95,7 @@ def render_wizard_step1():
     st.markdown("##### 📌 Chọn nhanh bộ dữ liệu mẫu kỹ thuật có sẵn:")
     c_btn1, c_btn2 = st.columns(2)
     with c_btn1:
-        if st.button("🤖 Nạp Mẫu: Cơ cấu Microrobot Actuator (5 Inputs, 2 Outputs)", use_container_width=False, width="stretch"):
+        if st.button("🤖 Nạp Mẫu: Cơ cấu Microrobot Actuator (5 Inputs, 2 Outputs)", width="stretch", key="load_sample_microrobot"):
             p1 = "data/dataset_27_samples.csv"
             if os.path.exists(p1):
                 df = pd.read_csv(p1)
@@ -101,13 +108,17 @@ def render_wizard_step1():
                 st.rerun()
 
     with c_btn2:
-        if st.button("🏗️ Nạp Mẫu: Dầm Chịu Uốn Cantilever Beam (3 Inputs, 3 Outputs)", use_container_width=False, width="stretch"):
+        if st.button("🏗️ Nạp Mẫu: Dầm Chịu Uốn Cantilever Beam (3 Inputs, 3 Outputs)", width="stretch", key="load_sample_beam"):
             p2 = "data/cantilever_beam_samples.csv"
             if os.path.exists(p2):
                 df = pd.read_csv(p2)
                 st.session_state.w_df = df
                 st.session_state.w_dataset_name = "Cantilever Beam Mechanics (28 mẫu)"
                 st.session_state.w_inputs = ["Length_L (mm)", "Width_b (mm)", "Height_h (mm)"]
+                st.session_state.w_outputs = ["Max_Deflection (mm)", "Max_Bending_Stress (MPa)", "Beam_Mass (kg)"]
+                st.session_state.w_engine = None
+                st.success("Đã nạp bộ dữ liệu Dầm Chịu Uốn!")
+                st.rerun()
                 st.session_state.w_outputs = ["Max_Deflection (mm)", "Max_Bending_Stress (MPa)", "Beam_Mass (kg)"]
                 st.session_state.w_engine = None
                 st.success("Đã nạp bộ dữ liệu Dầm Chịu Uốn!")
@@ -189,13 +200,13 @@ def render_wizard_step1():
     st.markdown("Hệ thống tự động điền giá trị $\min$ và $\max$ từ tập dữ liệu. Bạn có thể sửa trực tiếp để giới hạn không gian chế tạo thực tế:")
 
     bounds_dict = {}
-    cols_b = st.columns(len(sel_inputs)) if len(sel_inputs) <= 5 else [st.columns(3)[i % 3] for i in range(len(sel_inputs))]
+    n_show = min(max(len(sel_inputs), 1), 5)
+    cols_b = st.columns(n_show)
     
     for idx, inp in enumerate(sel_inputs):
-        col_container = cols_b[idx]
         d_min = float(df[inp].min())
         d_max = float(df[inp].max())
-        with col_container:
+        with cols_b[idx % n_show]:
             st.markdown(f"**Biến {inp}:**")
             b_min = st.number_input(f"Min ({inp})", value=d_min, key=f"b_min_{inp}", format="%.4f")
             b_max = st.number_input(f"Max ({inp})", value=d_max, key=f"b_max_{inp}", format="%.4f")
@@ -204,7 +215,7 @@ def render_wizard_step1():
     st.session_state.w_bounds = bounds_dict
 
     st.markdown("<br>", unsafe_allow_html=True)
-    if st.button("➡️ Tiếp tục sang Bước 2: Khám Phá & Phân Tích Độ Nhạy", type="primary", width="stretch"):
+    if st.button("➡️ Tiếp tục sang Bước 2: Khám Phá & Phân Tích Độ Nhạy", type="primary", width="stretch", key="btn_w_step1_next"):
         # Setup data pipeline
         pipeline = GenericDataPipeline()
         pipeline.setup_roles_and_bounds(df, sel_inputs, sel_outputs, bounds_dict)
@@ -230,10 +241,18 @@ def render_wizard_step2():
 
     if df is None or not inputs or not outputs:
         st.error("Chưa có cấu hình dữ liệu. Vui lòng quay lại Bước 1.")
-        if st.button("⬅️ Quay lại Bước 1"):
+        if st.button("⬅️ Quay lại Bước 1", key="btn_w_step2_back_err"):
             st.session_state.w_step = 1
             st.rerun()
         return
+
+    # Ensure bounds and pipeline are initialized
+    if not st.session_state.w_bounds:
+        st.session_state.w_bounds = {c: (float(df[c].min()), float(df[c].max())) for c in inputs}
+    if st.session_state.w_pipeline is None:
+        p = GenericDataPipeline()
+        p.setup_roles_and_bounds(df, inputs, outputs, st.session_state.w_bounds)
+        st.session_state.w_pipeline = p
 
     # 1. Correlation Matrix Heatmap
     st.markdown("### 🌡️ Biểu Đồ Nhiệt Tương Quan (Correlation Heatmap)")
@@ -328,11 +347,11 @@ def render_wizard_step2():
     st.markdown("<br>", unsafe_allow_html=True)
     c_b1, c_b2 = st.columns([1, 1])
     with c_b1:
-        if st.button("⬅️ Quay lại Bước 1", width="stretch"):
+        if st.button("⬅️ Quay lại Bước 1", width="stretch", key="btn_w_step2_back"):
             st.session_state.w_step = 1
             st.rerun()
     with c_b2:
-        if st.button("➡️ Tiếp tục sang Bước 3: Huấn Luyện Mô Hình Học Máy 1-Click", type="primary", width="stretch"):
+        if st.button("➡️ Tiếp tục sang Bước 3: Huấn Luyện Mô Hình Học Máy 1-Click", type="primary", width="stretch", key="btn_w_step2_next"):
             st.session_state.w_step = 3
             st.rerun()
 
@@ -535,11 +554,11 @@ def render_wizard_step3():
     st.markdown("<br>", unsafe_allow_html=True)
     c_b1, c_b2 = st.columns([1, 1])
     with c_b1:
-        if st.button("⬅️ Quay lại Bước 2", width="stretch"):
+        if st.button("⬅️ Quay lại Bước 2", width="stretch", key="btn_w_step3_back"):
             st.session_state.w_step = 2
             st.rerun()
     with c_b2:
-        if st.button("➡️ Tiếp tục sang Bước 4: Bản Sao Số Tương Tác Trực Tiếp", type="primary", width="stretch"):
+        if st.button("➡️ Tiếp tục sang Bước 4: Bản Sao Số Tương Tác Trực Tiếp", type="primary", width="stretch", key="btn_w_step3_next"):
             st.session_state.w_step = 4
             st.rerun()
 
@@ -667,11 +686,11 @@ def render_wizard_step4():
     st.markdown("<br>", unsafe_allow_html=True)
     c_b1, c_b2 = st.columns([1, 1])
     with c_b1:
-        if st.button("⬅️ Quay lại Bước 3", width="stretch"):
+        if st.button("⬅️ Quay lại Bước 3", width="stretch", key="btn_w_step4_back"):
             st.session_state.w_step = 3
             st.rerun()
     with c_b2:
-        if st.button("➡️ Tiếp tục sang Bước 5: Tối Ưu Hóa & Xuất Báo Cáo", type="primary", width="stretch"):
+        if st.button("➡️ Tiếp tục sang Bước 5: Tối Ưu Hóa & Xuất Báo Cáo", type="primary", width="stretch", key="btn_w_step4_next"):
             st.session_state.w_step = 5
             st.rerun()
 
@@ -884,6 +903,6 @@ def render_wizard_step5():
         )
 
     st.markdown("<br>", unsafe_allow_html=True)
-    if st.button("⬅️ Quay lại Bước 4 (Bản sao số)", width="stretch"):
+    if st.button("⬅️ Quay lại Bước 4 (Bản sao số)", width="stretch", key="btn_w_step5_back"):
         st.session_state.w_step = 4
         st.rerun()
