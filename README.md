@@ -145,6 +145,38 @@ Mở và chạy tuần tự các notebook trong thư mục `notebooks/`:
 
 ---
 
+## 🧙‍♂️ Thuật Sĩ Từng Bước (Universal 5-Step Engineering Wizard)
+
+Hệ thống đã được mở rộng thành một nền tảng WebUI tối ưu hóa cơ khí đa năng cho người dùng **không biết lập trình** qua 5 bước:
+
+1. **Bước 1: Tải lên & Gán vai trò cột (Data Ingestion & Wizard)**
+   - Kéo thả file `.csv` hoặc `.xlsx` (hoặc nạp nhanh mẫu Microrobot / Dầm chịu uốn Cantilever Beam).
+   - Kiểm tra chất lượng dữ liệu tự động (phát hiện ô trống NaN, kích thước mẫu).
+   - Chọn cột Inputs (biến thiết kế) và Outputs (chỉ tiêu kỹ thuật).
+   - Thiết lập miền giá trị $[\min, \max]$ giới hạn không gian chế tạo.
+
+2. **Bước 2: Tự động khám phá dữ liệu & Phân tích độ nhạy (Auto-EDA & Sensitivity)**
+   - Biểu đồ nhiệt tương quan (Correlation Heatmap) với diễn giải tự động bằng tiếng Việt.
+   - Phân rã phương sai ANOVA và biểu đồ cột Pareto xếp hạng mức độ ảnh hưởng (%) kèm đường 80/20.
+
+3. **Bước 3: Huấn luyện mô hình học máy 1-Click (AutoML Surrogate Engine)**
+   - Nút bấm 1-Click tự động huấn luyện mạng ANN và GPR (Gaussian Process).
+   - Đồng hồ đo độ chính xác (Accuracy Gauge) chia vạch Xanh ($\ge 95\%$), Vàng ($85-95\%$), Đỏ ($<85\%$).
+   - Đồ thị đối sánh thực nghiệm vs dự đoán bám sát đường chuẩn $y=x$.
+   - Dải tin cậy an toàn Gaussian Process $\pm 2\sigma$ đánh giá độ chắc chắn của mô hình.
+
+4. **Bước 4: Bản sao số tương tác trực tiếp (Live Digital Twin)**
+   - Thanh trượt tương tác cho từng thông số hình học, dự đoán kết quả siêu nhanh ($< 10\text{ ms}$).
+   - Đèn cảnh báo vi phạm giới hạn an toàn kỹ thuật (Pass/Fail Badges) tự động đổi màu Xanh/Đỏ theo ngưỡng.
+   - Biểu đồ Radar thể hiện cấu hình thiết kế trực quan.
+
+5. **Bước 5: Tối ưu hóa tự động & Xuất báo cáo (Optimization & Report)**
+   - Thiết lập mục tiêu: Tối đa hóa, Tối thiểu hóa, hoặc Khóa giá trị mong muốn.
+   - Vẽ đường cong đánh đổi vật lý Pareto Front 2D (NSGA-II) với thanh trượt ưu tiên đánh dấu sao vàng ⭐ vào nghiệm dung hòa.
+   - Nút bấm xuất file báo cáo chế tạo đầy đủ định dạng Excel (`.xlsx`) hoặc CSV để chuyển giao sang xưởng gia công.
+
+---
+
 ## 📊 Bảng Đối Sánh Kết Quả Tổng Thể Với Bài Báo
 
 | Trường hợp | Phương pháp | Stroke ($\mu\text{m}$) | Safety Factor (SF) | Tỉ số $A_R$ ($I_S = 135\ \mu\text{m}$) | Sai số vs FEA (%) | Đánh giá Tiêu chuẩn |
