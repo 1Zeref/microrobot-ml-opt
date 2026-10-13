@@ -1,0 +1,9 @@
+﻿Mục tiêu (Response),Mô hình (Model),Chế độ kiểm định (Evaluation),R2,RMSE,MAE,MAPE (%)
+Stroke (µm),ANN (5-11-1 Tanh),Full Fit (N=27),0.9999,0.5839,0.3885,0.03
+Stroke (µm),GPR (Matérn 5/2),Full Fit (N=27),1.0,0.0,0.0,0.0
+Stroke (µm),ANN (5-11-1 Tanh),5-Fold CV (K=5),-0.7734,94.0465,72.7815,5.75
+Stroke (µm),GPR (Matérn 5/2),LOOCV (K=27),0.2605,60.7299,44.5833,3.55
+Safety Factor (SF),ANN (5-11-1 Tanh),Full Fit (N=27),0.9999,0.001,0.0007,0.03
+Safety Factor (SF),GPR (Matérn 5/2),Full Fit (N=27),0.9956,0.0094,0.0069,0.36
+Safety Factor (SF),ANN (5-11-1 Tanh),5-Fold CV (K=5),-4.6363,0.3374,0.2738,13.97
+Safety Factor (SF),GPR (Matérn 5/2),LOOCV (K=27),-0.129,0.151,0.1088,5.62

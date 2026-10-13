@@ -1,0 +1,8 @@
+﻿Trường hợp (Case),Phương pháp,A (mm),B (mm),C (mm),D (mm),E (mm),Stroke (µm),Safety Factor,Mục tiêu Bài báo,Sai số Stroke (%),Sai số SF (%)
+Case 1: Max Stroke,TLBO (Pure Python),0.8,0.8,0.6453,0.5508,52.57,1607.01,2.089,"Stroke ≈ 1558 µm, SF ≈ 1.58",3.15%,32.19%
+Case 1: Max Stroke,Bài báo (Reference),0.9,0.8,0.6,0.6,50.0,1558.0,1.58,N/A (Gốc),0.00%,0.00%
+Case 2: Max SF,TLBO (Pure Python),0.9,0.7896,0.6879,0.65,50.54,1083.62,3.198,"SF ≈ 2.33, Stroke ≈ 1300 µm",16.64%,37.26%
+Case 2: Max SF,Bài báo (Reference),0.87,0.7,0.6,0.55,49.0,1300.0,2.33,N/A (Gốc),0.00%,0.00%
+Case 3: Multi-Objective,Weighted TLBO,0.8,0.8,0.6543,0.55,52.31,1602.84,2.476,"Stroke ≈ 1568.1 µm, SF ≈ 2.04",2.22%,21.37%
+Case 3: Multi-Objective,NSGA-II (pymoo),0.8,0.8,0.6452,0.5508,52.58,1607.01,2.081,"Stroke ≈ 1568.1 µm, SF ≈ 2.04",2.48%,1.99%
+Case 3: Multi-Objective,Bài báo (Reference),0.9,0.8,0.6,0.55,50.0,1568.1,2.04,N/A (Gốc),0.00%,0.00%

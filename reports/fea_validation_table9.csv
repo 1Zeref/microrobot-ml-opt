@@ -1,0 +1,7 @@
+﻿Trường hợp (Case Study),Mục tiêu tối ưu hóa,"Thông số tối ưu [A, B, C, D, E]",Chỉ số,Dự đoán ML-TLBO,Mô phỏng FEA ANSYS,Sai số kiểm chứng Error (%),Tiêu chuẩn (< 9.0%),Hệ số khuếch đại A_R,Tiêu chuẩn A_R (> 9.0)
+Case 1: Tối đa hóa Stroke,Cực đại hóa Stroke (f1),"[0.90, 0.80, 0.60, 0.60, 50.00]",Stroke (µm),1558.0,1432.0,8.8,Đạt (< 9%),11.540740740740741,Đạt (> 9.0)
+Case 1: Tối đa hóa Stroke,Cực đại hóa Stroke (f1),"[0.90, 0.80, 0.60, 0.60, 50.00]",Safety Factor (SF),1.58,1.55,1.94,Đạt (< 9%),,N/A
+Case 2: Tối đa hóa Safety Factor,Cực đại hóa SF (f2),"[0.87, 0.70, 0.60, 0.55, 49.00]",Safety Factor (SF),2.33,2.22,4.97,Đạt (< 9%),,N/A
+Case 2: Tối đa hóa Safety Factor,Cực đại hóa SF (f2),"[0.87, 0.70, 0.60, 0.55, 49.00]",Stroke (µm),1300.0,1240.0,4.84,Đạt (< 9%),9.62962962962963,Đạt (> 9.0)
+Case 3: Tối ưu hóa Đa mục tiêu,Đa mục tiêu đồng thời (Stroke & SF),"[0.90, 0.80, 0.60, 0.55, 50.00]",Stroke (µm),1568.1,1462.78,7.2,Đạt (< 9%),11.615555555555554,Đạt (> 9.0)
+Case 3: Tối ưu hóa Đa mục tiêu,Đa mục tiêu đồng thời (Stroke & SF),"[0.90, 0.80, 0.60, 0.55, 50.00]",Safety Factor (SF),2.04,2.12,3.77,Đạt (< 9%),,N/A
