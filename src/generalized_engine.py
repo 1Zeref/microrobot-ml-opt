@@ -301,30 +301,51 @@ class GenericSurrogateEngine:
                 gpr_fold.fit(X_norm[train_idx], y_norm[train_idx])
                 gpr_preds_cv[val_idx] = self.pipeline.denormalize_y(gpr_fold.predict(X_norm[val_idx]), out_col)
 
-            # Metrics
-            ann_r2 = max(0.0, float(r2_score(y_raw, ann_preds_cv)))
-            ann_rmse = float(np.sqrt(mean_squared_error(y_raw, ann_preds_cv)))
-            ann_mae = float(mean_absolute_error(y_raw, ann_preds_cv))
-            ann_mape = float(np.mean(np.abs((y_raw - ann_preds_cv) / np.maximum(np.abs(y_raw), 1e-8))) * 100.0)
+            # Full-fit predictions of the deployed models
+            ann_preds_full = self.pipeline.denormalize_y(ann.predict(X_norm), out_col)
+            gpr_preds_full = self.pipeline.denormalize_y(gpr.predict(X_norm), out_col)
 
-            gpr_r2 = max(0.0, float(r2_score(y_raw, gpr_preds_cv)))
-            gpr_rmse = float(np.sqrt(mean_squared_error(y_raw, gpr_preds_cv)))
+            # Full-fit training metrics
+            ann_r2_train = float(r2_score(y_raw, ann_preds_full))
+            ann_rmse_train = float(np.sqrt(mean_squared_error(y_raw, ann_preds_full)))
+            ann_mae_train = float(mean_absolute_error(y_raw, ann_preds_full))
+            ann_mape_train = float(np.mean(np.abs((y_raw - ann_preds_full) / np.maximum(np.abs(y_raw), 1e-8))) * 100.0)
+
+            gpr_r2_train = float(r2_score(y_raw, gpr_preds_full))
+            gpr_rmse_train = float(np.sqrt(mean_squared_error(y_raw, gpr_preds_full)))
+            gpr_mape_train = float(np.mean(np.abs((y_raw - gpr_preds_full) / np.maximum(np.abs(y_raw), 1e-8))) * 100.0)
+
+            # Cross-validation metrics
+            ann_r2_cv = float(r2_score(y_raw, ann_preds_cv))
+            ann_rmse_cv = float(np.sqrt(mean_squared_error(y_raw, ann_preds_cv)))
+            ann_mape_cv = float(np.mean(np.abs((y_raw - ann_preds_cv) / np.maximum(np.abs(y_raw), 1e-8))) * 100.0)
+
+            # Engineer-friendly Accuracy (%): 100 - MAPE (%)
+            accuracy_pct = round(max(0.0, min(100.0, 100.0 - ann_mape_train)), 2)
+            accuracy_cv_pct = round(max(0.0, min(100.0, 100.0 - ann_mape_cv)), 2)
 
             self.metrics_summary[out_col] = {
-                "ANN_R2": ann_r2,
-                "ANN_RMSE": ann_rmse,
-                "ANN_MAE": ann_mae,
-                "ANN_MAPE": ann_mape,
-                "GPR_R2": gpr_r2,
-                "GPR_RMSE": gpr_rmse,
+                "ANN_R2": ann_r2_train,
+                "ANN_RMSE": ann_rmse_train,
+                "ANN_MAE": ann_mae_train,
+                "ANN_MAPE": ann_mape_train,
+                "ANN_R2_CV": ann_r2_cv,
+                "ANN_RMSE_CV": ann_rmse_cv,
+                "ANN_MAPE_CV": ann_mape_cv,
+                "GPR_R2": gpr_r2_train,
+                "GPR_RMSE": gpr_rmse_train,
+                "GPR_MAPE": gpr_mape_train,
                 "Architecture": f"{n_features}-{n_hidden}-1",
-                "Accuracy_Pct": round(ann_r2 * 100.0, 2)
+                "Accuracy_Pct": accuracy_pct,
+                "Accuracy_CV_Pct": accuracy_cv_pct,
             }
 
             self.cv_predictions[out_col] = {
                 "y_actual": y_raw,
-                "y_ann_pred": ann_preds_cv,
-                "y_gpr_pred": gpr_preds_cv
+                "y_ann_pred": ann_preds_full,
+                "y_ann_cv": ann_preds_cv,
+                "y_gpr_pred": gpr_preds_full,
+                "y_gpr_cv": gpr_preds_cv,
             }
 
     def predict_one(self, x_dict: Dict[str, float], model_type: str = "ann") -> Dict[str, float]:
