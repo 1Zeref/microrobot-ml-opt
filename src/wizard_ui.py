@@ -1019,6 +1019,55 @@ def render_wizard_step5():
         st.dataframe(opt_df_y, width="stretch")
 
     st.markdown("---")
+    # 4.5. Run Robust Tolerance Stress-Test (Monte Carlo)
+    with st.expander("🛡️ Kiểm Tra Độ Bền Vững Dung Sai Chế Tạo (Monte Carlo Stress-Test)", expanded=True):
+        st.markdown("Khảo sát sự biến thiên của các chỉ tiêu kỹ thuật khi kích thước hình học dao động trong dung sai chế tạo:")
+        c_w_mc1, c_w_mc2 = st.columns(2)
+        with c_w_mc1:
+            mc_n = st.slider("Số lượng mẫu thử Monte Carlo (N):", 500, 5000, 2000, step=500, key="w_mc_n")
+        with c_w_mc2:
+            mc_tol_pct = st.slider("Dung sai gia công tương đối (± %):", 0.5, 3.0, 1.0, step=0.5, key="w_mc_tol")
+
+        if st.button("🚀 Run Robust Tolerance Stress-Test (Monte Carlo)", type="primary", width="stretch", key="w_btn_run_mc"):
+            with st.spinner(f"Đang sinh và đánh giá {mc_n:,} mẫu ngẫu nhiên..."):
+                nom_x = np.array([res_tlbo["best_solution_dict"][k] for k in inputs])
+                sigmas = np.maximum(1e-5, (nom_x * (mc_tol_pct / 100.0)) / 3.0)
+                rng = np.random.default_rng(42)
+                pert_samples = nom_x + rng.normal(0.0, sigmas, size=(mc_n, len(nom_x)))
+
+                for i_idx, k in enumerate(inputs):
+                    pert_samples[:, i_idx] = np.clip(pert_samples[:, i_idx], bounds[k][0], bounds[k][1])
+
+                preds_dict = engine.predict(pert_samples, return_std=False)
+                st.success(f"✅ Đã hoàn tất mô phỏng {mc_n:,} mẫu dung sai chế tạo!")
+
+                cols_mc = st.columns(len(outputs))
+                for o_idx, out_name in enumerate(outputs):
+                    vals = preds_dict[out_name]
+                    v_mean, v_std = float(np.mean(vals)), float(np.std(vals))
+                    with cols_mc[o_idx]:
+                        st.metric(f"{out_name} (Trung bình)", f"{v_mean:.3f}", delta=f"± {1.96*v_std:.3f} (95% CI)")
+
+                # Plot Histogram for first output
+                first_out = outputs[0]
+                fig_hist = go.Figure()
+                fig_hist.add_trace(go.Histogram(
+                    x=preds_dict[first_out],
+                    nbinsx=35,
+                    marker_color="#2563EB",
+                    opacity=0.75,
+                    name=f"Phân phối {first_out}",
+                ))
+                fig_hist.update_layout(
+                    title=f"<b>Phân Bố Xác Suất Monte Carlo Của {first_out} Khi Kích Thước Chịu Dung Sai ±{mc_tol_pct}%</b>",
+                    xaxis_title=f"<b>{first_out}</b>",
+                    yaxis_title="<b>Tần suất</b>",
+                    template="plotly_white",
+                    height=320,
+                )
+                st.plotly_chart(fig_hist, width="stretch")
+
+    st.markdown("---")
     # 5. Export Report
     st.markdown("### 📥 Xuất Báo Cáo Cấu Hình Tối Ưu (Manufacturing Specification)")
     st.markdown("Tải file cấu hình hoàn chỉnh để gửi trực tiếp cho xưởng gia công hoặc đội ngũ chế tạo cơ khí:")

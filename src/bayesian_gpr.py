@@ -27,7 +27,7 @@ from scipy.stats import norm
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.gaussian_process.kernels import RBF, Matern, ConstantKernel as C, WhiteKernel
+from sklearn.gaussian_process.kernels import RBF, Matern, RationalQuadratic, ConstantKernel as C, WhiteKernel
 from sklearn.model_selection import LeaveOneOut, KFold, RepeatedKFold
 from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
 
@@ -39,22 +39,25 @@ from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
 def build_gpr_kernel(kernel_type: str = "matern52") -> Any:
     """
     Xây dựng kernel cho GPR với tham số khởi tạo và bounds tối ưu hóa:
-    - 'rbf': RBF trơn vô hạn (C^inf), phù hợp với hàm liên tục trơn mượt tuyệt đối.
-    - 'matern32': Matérn nu=1.5 (C^1), cho phép biến thiên nhanh hơn.
     - 'matern52': Matérn nu=2.5 (C^2), phù hợp lý tưởng với phương trình vi phân đàn hồi bậc 2.
+    - 'matern32': Matérn nu=1.5 (C^1), cho phép biến thiên nhanh hơn.
+    - 'rq': RationalQuadratic, hỗn hợp vô hạn các RBF đa quy mô độ dài.
+    - 'rbf': RBF trơn vô hạn (C^inf), giả định trơn mượt tuyệt đối.
     """
     kernel_type = kernel_type.lower()
     const = C(constant_value=1.0, constant_value_bounds=(1e-2, 1e3))
     noise = WhiteKernel(noise_level=1e-4, noise_level_bounds=(1e-7, 1e-1))
 
-    if kernel_type == "rbf":
+    if kernel_type in ["rbf", "gaussian"]:
         cov = RBF(length_scale=1.0, length_scale_bounds=(0.05, 20.0))
     elif kernel_type in ["matern32", "matern_32", "matern 3/2", "3/2"]:
         cov = Matern(length_scale=1.0, length_scale_bounds=(0.05, 20.0), nu=1.5)
     elif kernel_type in ["matern52", "matern_52", "matern 5/2", "5/2"]:
         cov = Matern(length_scale=1.0, length_scale_bounds=(0.05, 20.0), nu=2.5)
+    elif kernel_type in ["rq", "rationalquadratic", "rational_quadratic"]:
+        cov = RationalQuadratic(length_scale=1.0, alpha=1.0, length_scale_bounds=(0.05, 20.0), alpha_bounds=(1e-2, 1e2))
     else:
-        raise ValueError(f"Kernel type '{kernel_type}' không hợp lệ. Chọn 'rbf', 'matern32', hoặc 'matern52'.")
+        raise ValueError(f"Kernel type '{kernel_type}' không hợp lệ. Chọn 'matern52', 'matern32', 'rq', hoặc 'rbf'.")
 
     return const * cov + noise
 
@@ -246,9 +249,10 @@ def compare_gpr_kernels(
     dưới cả chế độ Full Fit và LOOCV.
     """
     kernels = [
-        ("RBF", "rbf", "C^inf (Vô hạn lần khả vi, giả định biến thiên siêu trơn)"),
-        ("Matérn 3/2", "matern32", "C^1 (1 lần khả vi, cho phép biến thiên dốc)"),
-        ("Matérn 5/2", "matern52", "C^2 (2 lần khả vi, tương thích hoàn hảo với PDE đàn hồi)"),
+        ("Matérn 5/2", "matern52", "C^2 (2 lần khả vi, tương thích hoàn hảo với PDE đàn hồi bậc 2 - Mô hình chủ đạo)"),
+        ("Matérn 3/2", "matern32", "C^1 (1 lần khả vi, mô phỏng biến thiên dốc)"),
+        ("RationalQuadratic", "rq", "Hỗn hợp vô hạn các RBF đa quy mô độ dài (đa tỷ lệ)"),
+        ("RBF (Gaussian)", "rbf", "C^inf (Vô hạn lần khả vi, nguy cơ quá trơn làm mờ đỉnh ứng suất)"),
     ]
 
     records = []
