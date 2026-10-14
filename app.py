@@ -33,6 +33,7 @@ from src.wizard_ui import (
     render_wizard_step3,
     render_wizard_step4,
     render_wizard_step5,
+    render_wizard_step6,
 )
 from src.microrobot_pages import render_microrobot_pages
 
@@ -109,13 +110,13 @@ st.sidebar.title("Nền Tảng Tối Ưu Hóa")
 app_mode = st.sidebar.selectbox(
     "🛠️ CHỌN CHẾ ĐỘ SỬ DỤNG:",
     [
-        "🧙‍♂️ Thuật Sĩ Từng Bước (Universal Wizard - 5 Bước)",
+        "🧙‍♂️ Thuật Sĩ Từng Bước (Universal Wizard - 6 Bước)",
         "🔬 Chuyên Đề Microrobot (Paper Case Studies & Table 9)",
     ],
     index=0,
 )
 
-if app_mode == "🧙‍♂️ Thuật Sĩ Từng Bước (Universal Wizard - 5 Bước)":
+if app_mode == "🧙‍♂️ Thuật Sĩ Từng Bước (Universal Wizard - 6 Bước)":
     init_wizard_session()
     wizard_steps_labels = [
         "1. 📥 Tải Lên & Gán Vai Trò",
@@ -123,6 +124,7 @@ if app_mode == "🧙‍♂️ Thuật Sĩ Từng Bước (Universal Wizard - 5 B
         "3. 🧠 Huấn Luyện Học Máy 1-Click",
         "4. 🎛️ Bản Sao Số Trực Tiếp",
         "5. 🏆 Tối Ưu Hóa & Xuất Báo Cáo",
+        "6. 🔬 Kiểm Định Khoa Học Cho Hội Đồng",
     ]
     st.sidebar.markdown("---")
     st.sidebar.markdown("### 🧭 Các Bước Thuật Sĩ:")
@@ -138,12 +140,13 @@ if app_mode == "🧙‍♂️ Thuật Sĩ Từng Bước (Universal Wizard - 5 B
 
     st.sidebar.markdown("---")
     st.sidebar.info("""
-    **Kiến trúc Wizard 5 Bước:**
+    **Kiến trúc Wizard 6 Bước:**
     1. Upload CSV/Excel & định nghĩa Input/Output
     2. Heatmap & Pareto ANOVA tự động
     3. Huấn luyện ANN & GPR 1-Click
     4. Sliders Digital Twin & cảnh báo Pass/Fail
     5. TLBO & NSGA-II Pareto + Xuất Excel/CSV
+    6. Kiểm định GPR, 30 Runs Wilcoxon & Monte Carlo
     """)
 
     render_step_progress_bar()
@@ -159,6 +162,8 @@ if app_mode == "🧙‍♂️ Thuật Sĩ Từng Bước (Universal Wizard - 5 B
         render_wizard_step4()
     elif st.session_state.w_step == 5:
         render_wizard_step5()
+    elif st.session_state.w_step == 6:
+        render_wizard_step6()
 
 else:
     # Dedicated Microrobot Pages
@@ -171,6 +176,7 @@ else:
             "3. Tối ưu hóa TLBO & Đa mục tiêu (Pareto)",
             "4. Bộ Dự đoán Tương tác Trực tiếp (Live Sliders)",
             "5. Kiểm chứng FEA ANSYS & Hệ số A_R (Table 9)",
+            "6. 🏆 Nâng Cấp Khoa Học (GPR, Wilcoxon, Monte Carlo, FEA)",
         ],
     )
 

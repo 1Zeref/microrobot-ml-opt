@@ -1,0 +1,3 @@
+﻿Trường hợp,Nominal_A,Nominal_B,Nominal_C,Nominal_D,Nominal_E,N_samples,Stroke_Nominal,Stroke_Mean,Stroke_Std,Stroke_CV (%),Stroke_95CI,Stroke_Min,Stroke_Max,SF_Nominal,SF_Mean,SF_Std,SF_CV (%),SF_95CI,SF_Min,SF_Max,SF_Threshold,Safety_Probability (%),Failure_Probability (%),Process_Capability_Cpk,Robustness_Level
+Case 1: Tối đa hóa Stroke,0.9,0.8,0.6,0.6,50.0,25000,1270.8685691741928,1272.36,0.83,0.07,"[1270.73, 1274.02]",1268.62,1276.75,1.9525555555243659,1.953,0.0,0.0,"[1.953, 1.953]",1.953,1.953,1.5,100.0,0.0,inf,Rất cao (Cpk > 1.33)
+Case 3: Đa mục tiêu đồng thời,0.9,0.8,0.6,0.55,50.0,25000,1282.1378613085067,1281.59,1.16,0.09,"[1279.59, 1284.10]",1278.08,1287.37,1.9525555555558822,1.953,0.0,0.0,"[1.953, 1.953]",1.953,1.953,1.5,100.0,0.0,inf,Rất cao (Cpk > 1.33)

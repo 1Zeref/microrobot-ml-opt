@@ -1,0 +1,7 @@
+﻿Mục tiêu,Kernel,Đặc tính toán học & Vật lý,Full-Fit R²,Full-Fit RMSE,LOOCV R²,LOOCV RMSE,LOOCV MAE,LOOCV MAPE (%),Repeated 5-Fold R²,Repeated 5-Fold RMSE
+Stroke (µm),RBF,"C^inf (Vô hạn lần khả vi, giả định biến thiên siêu trơn)",1.0,0.0,0.1764,64.0915,46.5611,3.719,-0.1117 ± 0.4301,64.9369 ± 16.8029
+Stroke (µm),Matérn 3/2,"C^1 (1 lần khả vi, cho phép biến thiên dốc)",1.0,0.0,0.2073,62.8765,46.1807,3.687,0.0703 ± 0.3996,59.9092 ± 18.3026
+Stroke (µm),Matérn 5/2,"C^2 (2 lần khả vi, tương thích hoàn hảo với PDE đàn hồi)",1.0,0.0,0.1983,63.2316,46.2004,3.69,0.0581 ± 0.4067,60.2996 ± 18.4649
+Safety factor (SF),RBF,"C^inf (Vô hạn lần khả vi, giả định biến thiên siêu trơn)",0.9969,0.0079,-0.2419,0.1584,0.1138,5.874,-0.8108 ± 0.9292,0.148 ± 0.0547
+Safety factor (SF),Matérn 3/2,"C^1 (1 lần khả vi, cho phép biến thiên dốc)",0.9971,0.0076,-0.1749,0.1541,0.1115,5.762,-0.7572 ± 0.8872,0.1463 ± 0.0541
+Safety factor (SF),Matérn 5/2,"C^2 (2 lần khả vi, tương thích hoàn hảo với PDE đàn hồi)",0.997,0.0078,-0.1917,0.1552,0.1122,5.795,-0.7747 ± 0.8978,0.147 ± 0.0544

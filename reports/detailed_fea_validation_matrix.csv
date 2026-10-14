@@ -1,0 +1,7 @@
+﻿Trường hợp (Case Study),Mục tiêu tối ưu,Thông số tối ưu,Chỉ số đáp ứng,Nghiệm ban đầu (Baseline),Dự đoán ML (y_ML),Tái mô phỏng FEA (y_FEA),Sai số tương đối Error (%),Độ chính xác kỹ thuật,Độ cải thiện ML so với Baseline (%),Độ cải thiện FEA so với Baseline (%),Hệ số khuếch đại AR (FEA),Tiêu chuẩn AR > 9.0
+Case 1: Tối đa hóa Stroke,Cực đại hóa Stroke (f1),"[0.90, 0.80, 0.60, 0.60, 50.00]",Stroke (µm),1274.46,1558.0,1432.0,8.8,Đạt chuẩn bài báo (< 9.0%) ✅,+22.25%,+12.36%,10.61 lần,Đạt (> 9.0) ✅
+Case 1: Tối đa hóa Stroke,Cực đại hóa Stroke (f1),"[0.90, 0.80, 0.60, 0.60, 50.00]",Safety Factor (SF),1.79,1.58,1.55,1.94,Xuất sắc (< 3.0%) 🌟,-11.98%,-13.65%,N/A,N/A
+Case 2: Tối đa hóa Safety Factor,Cực đại hóa SF (f2),"[0.87, 0.70, 0.60, 0.55, 49.00]",Safety Factor (SF),1.79,2.33,2.22,4.95,Chuẩn vàng (< 5.0%) ✅,+29.81%,+23.68%,N/A,N/A
+Case 2: Tối đa hóa Safety Factor,Cực đại hóa SF (f2),"[0.87, 0.70, 0.60, 0.55, 49.00]",Stroke (µm),1274.46,1300.0,1240.0,4.84,Chuẩn vàng (< 5.0%) ✅,+2.00%,-2.70%,9.19 lần,Đạt (> 9.0) ✅
+Case 3: Tối ưu hóa Đa mục tiêu,Đa mục tiêu đồng thời (Stroke & SF),"[0.90, 0.80, 0.60, 0.55, 50.00]",Stroke (µm),1274.46,1568.1,1462.78,7.2,Đạt chuẩn bài báo (< 9.0%) ✅,+23.04%,+14.78%,10.84 lần,Đạt (> 9.0) ✅
+Case 3: Tối ưu hóa Đa mục tiêu,Đa mục tiêu đồng thời (Stroke & SF),"[0.90, 0.80, 0.60, 0.55, 50.00]",Safety Factor (SF),1.79,2.04,2.12,3.77,Chuẩn vàng (< 5.0%) ✅,+13.65%,+18.11%,N/A,N/A
