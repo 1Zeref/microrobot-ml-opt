@@ -1038,7 +1038,12 @@ def render_wizard_step5():
                 for i_idx, k in enumerate(inputs):
                     pert_samples[:, i_idx] = np.clip(pert_samples[:, i_idx], bounds[k][0], bounds[k][1])
 
-                preds_dict = engine.predict(pert_samples, return_std=False)
+                if hasattr(engine, "predict"):
+                    preds_dict = engine.predict(pert_samples, model_type="gpr", return_std=False)
+                elif hasattr(engine, "predict_batch_fast"):
+                    preds_dict = engine.predict_batch_fast(pert_samples)
+                else:
+                    raise AttributeError("Mô hình surrogate không hỗ trợ hàm predict hoặc predict_batch_fast.")
                 st.success(f"✅ Đã hoàn tất mô phỏng {mc_n:,} mẫu dung sai chế tạo!")
 
                 cols_mc = st.columns(len(outputs))

@@ -304,6 +304,28 @@ class SurrogateEngine:
             pred_raw = self.pipeline.inverse_transform_y(pred_norm_matrix)
             return pred_raw[:, 0], pred_raw[:, 1]
 
+    def predict(self, X_raw: np.ndarray) -> Dict[str, Dict[str, Any]]:
+        """Dự đoán cả ANN và GPR kèm độ bất định cho 1 điểm hoặc danh sách điểm."""
+        X_raw = np.asarray(X_raw, dtype=float)
+        if X_raw.ndim == 1:
+            X_raw = X_raw.reshape(1, -1)
+        s_ann, sf_ann = self.predict_ann(X_raw)
+        s_gpr, sf_gpr, std_s_gpr, std_sf_gpr = self.predict_gpr(X_raw, return_std=True)
+
+        is_single = len(s_ann) == 1
+        return {
+            "ann": {
+                "stroke": float(s_ann[0]) if is_single else s_ann,
+                "safety_factor": float(sf_ann[0]) if is_single else sf_ann,
+            },
+            "gpr": {
+                "stroke": float(s_gpr[0]) if is_single else s_gpr,
+                "safety_factor": float(sf_gpr[0]) if is_single else sf_gpr,
+                "stroke_std": float(std_s_gpr[0]) if is_single else std_s_gpr,
+                "safety_factor_std": float(std_sf_gpr[0]) if is_single else std_sf_gpr,
+            },
+        }
+
     def save_models(self, save_dir: str = "models/saved_weights"):
         """Lưu lại mô hình, trọng số tối ưu và ma trận trọng số ANN."""
         os.makedirs(save_dir, exist_ok=True)

@@ -391,6 +391,52 @@ class GenericSurrogateEngine:
             results[out_col] = self.pipeline.denormalize_y(y_norm, out_col)
         return results
 
+    def predict(
+        self,
+        X_phys: np.ndarray,
+        model_type: str = "gpr",
+        return_std: bool = False,
+    ) -> Union[Dict[str, np.ndarray], Tuple[Dict[str, np.ndarray], Dict[str, np.ndarray]]]:
+        """
+        Batch prediction across all target outputs.
+        X_phys: array of shape (N, n_features) or (n_features,).
+        Returns dict mapping each output column to a 1D numpy array of predictions.
+        If return_std=True, returns (means_dict, stds_dict).
+        """
+        X_phys = np.asarray(X_phys, dtype=float)
+        if X_phys.ndim == 1:
+            X_phys = X_phys.reshape(1, -1)
+
+        X_norm = self.pipeline.normalize_X(X_phys)
+        means: Dict[str, np.ndarray] = {}
+        stds: Dict[str, np.ndarray] = {}
+
+        for out_col in self.pipeline.output_cols:
+            if model_type == "gpr" and out_col in self.gpr_models:
+                if return_std:
+                    mu_norm, s_norm = self.gpr_models[out_col].predict(X_norm, return_std=True)
+                    means[out_col] = self.pipeline.denormalize_y(mu_norm, out_col)
+                    sigma_scale = self.pipeline.y_stats[out_col][1]
+                    stds[out_col] = s_norm * sigma_scale
+                else:
+                    mu_norm = self.gpr_models[out_col].predict(X_norm, return_std=False)
+                    means[out_col] = self.pipeline.denormalize_y(mu_norm, out_col)
+            elif out_col in self.ann_models:
+                y_norm = self.ann_models[out_col].predict(X_norm)
+                means[out_col] = self.pipeline.denormalize_y(y_norm, out_col)
+                if return_std:
+                    stds[out_col] = np.zeros_like(means[out_col])
+            elif out_col in self.gpr_models:
+                mu_norm = self.gpr_models[out_col].predict(X_norm, return_std=False)
+                means[out_col] = self.pipeline.denormalize_y(mu_norm, out_col)
+                if return_std:
+                    stds[out_col] = np.zeros_like(means[out_col])
+
+        if return_std:
+            return means, stds
+        return means
+
+
 
 # ==============================================================================
 # 3. GENERIC OPTIMIZATION ENGINE (PURE TLBO & NSGA-II)
